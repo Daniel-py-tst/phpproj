@@ -2,4 +2,15 @@
 
 declare(strict_types = 1);
 
-// Your Code
+$dir = dirname(__DIR__) . DIRECTORY_SEPARATOR . "transaction_files";
+
+
+function returnDirFiles(string $directory): array{
+    $files = scandir($directory);
+    array_splice($files, 0, 2);
+    return $files;
+}
+
+
+print_r(returnDirFiles($dir));
+
