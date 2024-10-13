@@ -14,5 +14,7 @@ function returnDirFiles(string $directory): array{
 
 print_r(returnDirFiles($dir));
 
-#hello
 
+
+#hello
+#rgnegjneroeioln
