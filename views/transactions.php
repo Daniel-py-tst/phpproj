@@ -1,3 +1,7 @@
+<?php 
+include_once("../public/index.php");
+?>
+
 <!DOCTYPE html>
 <html>
     <head>
@@ -34,20 +38,32 @@
                 </tr>
             </thead>
             <tbody>
-                <!-- YOUR CODE -->
+            <?php foreach ($transactionArray as $transaction): ?>
+                <tr>
+                    <td><?= $transaction["Date"] ?></td>
+                    <td><?= $transaction["Check #"] ?></td>
+                    <td><?= $transaction["Description"] ?></td>
+                    
+                    <?php $color = isPositive($transaction["Amount"]) ? "green" : "red" ?>
+                    <td style = "<?= 'color: '. $color?>">
+                        <?= $transaction["Amount"] ?>
+                    </td>
+                    
+                </tr>
+            <?php endforeach; ?>
             </tbody>
             <tfoot>
                 <tr>
                     <th colspan="3">Total Income:</th>
-                    <td><!-- YOUR CODE --></td>
+                    <td><?= $totalIncome ?></td>
                 </tr>
                 <tr>
                     <th colspan="3">Total Expense:</th>
-                    <td><!-- YOUR CODE --></td>
+                    <td><?= $totalExpense ?></td>
                 </tr>
                 <tr>
                     <th colspan="3">Net Total:</th>
-                    <td><!-- YOUR CODE --></td>
+                    <td><?= $netTotal ?></td>
                 </tr>
             </tfoot>
         </table>
