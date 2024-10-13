@@ -18,7 +18,7 @@ function returnDirFiles(string $directoryPath): array {
     }
     return $files;
 }
-
+$srkjnrkgjrgeg
 function parseFiles(array $files, string $folder){
     $returnArray = [];
     #runs through each file in the specified directory assuming it is a csv file
