@@ -8,6 +8,17 @@ function returnDirFiles(string $directory): array{
     return $files;
 }
 
+function returnDirFiles(string $directoryPath): array {
+    $files = [];
+    foreach(scandir($directoryPath) as $file){
+        if(is_dir($file)){
+            continue;
+        }
+        $files[] = $directoryPath . $file;
+    }
+    return $files;
+}
+
 function parseFiles(array $files, string $folder){
     $returnArray = [];
     #runs through each file in the specified directory assuming it is a csv file
