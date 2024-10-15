@@ -1,7 +1,3 @@
-<?php 
-include_once("../public/index.php");
-?>
-
 <!DOCTYPE html>
 <html>
     <head>
@@ -38,32 +34,41 @@ include_once("../public/index.php");
                 </tr>
             </thead>
             <tbody>
-            <?php foreach ($transactionArray as $transaction): ?>
-                <tr>
-                    <td><?= $transaction["Date"] ?></td>
-                    <td><?= $transaction["Check #"] ?></td>
-                    <td><?= $transaction["Description"] ?></td>
-                    
-                    <?php $color = isPositive($transaction["Amount"]) ? "green" : "red" ?>
-                    <td style = "<?= 'color: '. $color?>">
-                        <?= $transaction["Amount"] ?>
-                    </td>
-                    
-                </tr>
-            <?php endforeach; ?>
+                <?php if(! empty($transactions)):?>
+                    <?php foreach($transactions as $transaction):?>
+                        <tr>
+                            <td><?= formatDate($transaction['date']) ?></td>
+                            <td><?= $transaction['checkNumber'] ?></td>
+                            <td><?= $transaction['description'] ?></td>
+                            <td>
+                                <?php if ($transaction['amount'] < 0): ?>
+                                    <span style="color: red;">
+                                        <?= formatDollarAmount($transaction['amount']) ?>
+                                    </span>
+                                <?php elseif ($transaction['amount'] > 0): ?>
+                                    <span style="color: green;">
+                                        <?= formatDollarAmount($transaction['amount']) ?>
+                                    </span>
+                                <?php else: ?>
+                                    <?= formatDollarAmount($transaction['amount']) ?>
+                                <?php endif ?>
+                            </td>
+                        </tr>
+                    <?php endforeach ?>
+                <?php endif ?>
             </tbody>
             <tfoot>
                 <tr>
                     <th colspan="3">Total Income:</th>
-                    <td><?= $totalIncome ?></td>
+                    <td><?= formatDollarAmount($totals['totalIncome']  ?? 0) ?></td>
                 </tr>
                 <tr>
                     <th colspan="3">Total Expense:</th>
-                    <td><?= $totalExpense ?></td>
+                    <td><?= formatDollarAmount($totals['totalExpense']  ?? 0) ?></td>
                 </tr>
                 <tr>
                     <th colspan="3">Net Total:</th>
-                    <td><?= $netTotal ?></td>
+                    <td><?= formatDollarAmount($totals['netTotal']  ?? 0) ?></td>
                 </tr>
             </tfoot>
         </table>
