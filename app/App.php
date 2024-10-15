@@ -2,12 +2,6 @@
 
 declare(strict_types = 1);
 
-function returnDirFiles(string $directory): array{
-    $files = scandir($directory);
-    array_splice($files, 0, 2);
-    return $files;
-}
-
 function returnDirFiles(string $directoryPath): array {
     $files = [];
     foreach(scandir($directoryPath) as $file){
@@ -18,57 +12,53 @@ function returnDirFiles(string $directoryPath): array {
     }
     return $files;
 }
-$srkjnrkgjrgeggit
-function parseFiles(array $files, string $folder){
-    $returnArray = [];
-    #runs through each file in the specified directory assuming it is a csv file
-    foreach($files as $file){
-        #check if the file is not empty
-        $readableFile = (bool) filesize($folder . $file);
-        if(!$readableFile){
-            echo $file . " is empty, continuing... <br/>";
-            continue;
+
+function getTransactions(string $fileName, ?callable $transactionHandler = null): array{
+    if(!file_exists($fileName)){
+        trigger_error('File "' . $fileName . '" does now exist.' . E_USER_ERROR);
+    }
+
+    $file = fopen($fileName, "r");
+    fgetcsv($file);
+    $transactions = [];
+
+    while (($transaction = fgetcsv($file)) != false){
+        if($transactionHandler !== null){
+            $transaction = $transactionHandler($transaction);
         }
 
-        echo "opening " . $folder . $file . "... <br/>";
-        $filePointer = fopen($folder . $file, "r");
-        #headers of the csv file and array to return
-        $headers = fgetcsv($filePointer);
-        $fileArray = [];
+        $transactions[] = $transaction;
+    }
 
-        #loops through until eof and combines the headers with the corresponding data
-        while(($line = fgetcsv($filePointer)) != false){
-            $data = array_combine($headers, $line);
-            $fileArray[] = $data;
+    return $transactions;
+}
+
+function extractTransaction(array $transactionRow): array {
+    [$date, $checkNumber, $description, $amount] = $transactionRow;
+    $amount = (float) str_replace(['$', ','], '', $amount);
+    return [
+        'date' => $date,
+        'checkNumber' => $checkNumber,
+        'description' => $description,
+        'amount' => $amount
+    ];
+}
+
+function calculateTotals(array $transactions): array {
+    $totals = [
+        'netTotal' => 0,
+        'totalIncome' => 0,
+        'totalExpense' => 0
+    ];
+
+    foreach($transactions as $transaction){
+        $totals['netTotal'] += $transaction['amount'];
+
+        if($transaction['amount'] >= 0){
+            $totals['totalIncome'] += $transaction['amount'];
+        }else{
+            $totals['totalExpense'] += $transaction['amount'];
         }
-        $returnArray[] = $fileArray;
-        fclose($filePointer);
     }
-    return $returnArray;
+    return $totals;
 }
-
-function isPositive(string $value): bool{
-    return !(str_contains($value, "-"));
-}
-
-
-function dollarToInt(string $dollars, int $levels): float{
-    $noCommas = $dollars;
-    if(strpos($dollars, ",")){
-        $noCommas = str_replace(',', '', $dollars);
-    }
-    return  (float) substr($noCommas, $levels);
-}
-
-function formatDollarAmount($amount) {
-    // Handle negative formatting
-    if ($amount < 0) {
-        return '-$' . number_format(abs($amount), 2);
-    }
-    return '$' . number_format($amount, 2);
-}
-
-
-
-
-
